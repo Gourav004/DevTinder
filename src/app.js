@@ -36,20 +36,37 @@ const adminAuth = require("../src/Middlewares/auth")
 
 //AUth using middleware
 
-app.use("/admin", adminAuth);
+// app.use("/admin", adminAuth);
 
 
-app.get( "/admin/getAllData", (req, res) => {
-    res.send("All Data is here!!!");
+// app.get( "/admin/getAllData", (req, res) => {
+//     res.send("All Data is here!!!");
+// })
+// app.get( "/user", (req, res) => {
+//     res.send("All Data is here!!!");
+// })
+
+// app.get( "/admin/deleteUser", (req, res) => {
+//     res.send("User Deleted!!!");
+// })
+
+// ++++++++++++++++++++Error Handling+++++++++++++++++++++++++
+
+app.get("/user", (req, res) => {
+    //Logic of DB Call and get error
+
+    throw new Error("Error in DB Call!!!");
+    res.send("User hu bhai!!!");
 })
-app.get( "/user", (req, res) => {
-    res.send("All Data is here!!!");
-})
-    
-app.get( "/admin/deleteUser", (req, res) => {
-    res.send("User Deleted!!!");
-})
+
+app.use("/", (err, req, res, next) => {
+    if (err) {
+        res.status(500).send("Internal Server Error!!!");
+    }
+});
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
+
+
