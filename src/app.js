@@ -1,72 +1,40 @@
 const express = require('express');
 const app = express();
-const adminAuth = require("../src/Middlewares/auth")
+const connectDB = require("./Config/database")
+const User = require("./Models/user");
 
-// app.get("/user/:userID", (req, res) => {
-//     console.log(req.params);
-//     res.send("ID is " + req.params.userID);
-//     // res.send("Its working fine");
-// });
-// app.use(
-//     "/user",
-//     (req, res , next) => {
-//     console.log("Sending Request 1!!!");
-//     next();
-//     // res.send("Its working fine");
-        
+app.post("/signup", async (req, res) => {
+    //Creating instance of User Model
+    const user = new User({
+        firstName: "Virat",
+        lastName: "Kohli",
+        email: "Virat@123gmai.com",
+        password: "Virat123",
 
-// },
-//     (req, res) => {
-//      console.log("Sending Request 2!!!");
-//      res.send("Its working fine 2");
-// })
-
-// app.get("/user", (req, res) => {
-//     console.log("Handler 1!!!");
-//     res.send("Response 1!!!");
-//     // res.send("Its working fine");
-// });
-// app.get("/user", (req, res) => {
-//     console.log("Handler 2!!!");
-//     res.send("Response 2!!!");
-//     // res.send("Its working fine");
-// });
-
-
-
-//AUth using middleware
-
-// app.use("/admin", adminAuth);
-
-
-// app.get( "/admin/getAllData", (req, res) => {
-//     res.send("All Data is here!!!");
-// })
-// app.get( "/user", (req, res) => {
-//     res.send("All Data is here!!!");
-// })
-
-// app.get( "/admin/deleteUser", (req, res) => {
-//     res.send("User Deleted!!!");
-// })
-
-// ++++++++++++++++++++Error Handling+++++++++++++++++++++++++
-
-app.get("/user", (req, res) => {
-    //Logic of DB Call and get error
-
-    throw new Error("Error in DB Call!!!");
-    res.send("User hu bhai!!!");
-})
-
-app.use("/", (err, req, res, next) => {
-    if (err) {
-        res.status(500).send("Internal Server Error!!!");
+    });
+    //Creating a new instance of User Model
+    try {
+        await user.save(); // Saving the user to the database
+        res.send("User Created Successfully!!!");
     }
+    catch(err) {
+        res.status(500).send("Error in Creating User!!!");
+    }
+
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+connectDB()
+    .then(() => {
+        console.log("DB Connected Successfully!!!");
+        app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+    
 });
+    })
+    .catch((err) => {
+    console.log("Error in DB Connection!!!");
+});
+
+
 
 
