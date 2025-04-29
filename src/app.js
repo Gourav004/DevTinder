@@ -66,9 +66,21 @@ app.delete("/user", async (req, res) => {
 })
 
 //Update a user data
-app.patch("/user", async (req, res) => {
-    const userID = req.body.userID;
-    const data = req.body;
+app.patch("/user/:userID", async (req, res) => {
+   const userID = req.params?.userID;  //extracting userID from the URL
+    const data = req.body; //extracting data from the body of the request
+
+//update data onlu some keys
+    const ALLOWED_UPDATES = ["photoUrl", "about", "skills", "gender" , "age"];
+    const isUpdateAllowed = Object.keys(data).every(k => ALLOWED_UPDATES.includes(k));
+
+    if (!isUpdateAllowed) {
+        throw new Error("Invalid update fields");
+    }
+    if (data.skills.length > 5) { 
+        throw new Error("Skills should be less than 5");
+    }
+    
     try {
         await User.findByIdAndUpdate({ _id: userID }, data, {
             returnDocument: "after",

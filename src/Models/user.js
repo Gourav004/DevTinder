@@ -5,9 +5,19 @@ const userSchema = new mongoose.Schema(
         firstName: {
             type: String,
             required: true,
+            validate(value) { 
+                if (value.length > 20) {
+                    throw new Error("First name should be less than 20 characters");
+                }
+            }
         },
         lastName: {
             type: String,
+             validate(value) { 
+                if (value.length > 20) {
+                    throw new Error("First name should be less than 20 characters");
+                }
+            }
             
 
         },
@@ -44,10 +54,16 @@ const userSchema = new mongoose.Schema(
         about: {
             type: String,
             default: "Hey there! This is the default about.",
+            maxlength: 200, // Maximum length of the about string
+            trim: true, // Removes any leading or trailing whitespace
         },
         skills: {
-            type: [String], // Array of strings
+            type: [String], // Array of strings for skills
+            default: [], // Default value is an empty array
         }
+        
+     
+    
     },
         {
             timestamps:true
