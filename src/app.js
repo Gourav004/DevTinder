@@ -7,7 +7,7 @@ const User = require("./Models/user");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
-const {userAuth} = require("./Middlewares/auth");
+const userAuth = require("./Middlewares/auth");
 
 app.use(express.json()); 
 app.use(cookieParser());
@@ -51,11 +51,11 @@ app.post("/login", async (req, res) => {
             throw new Error("Invalid Credentials"); //throwing error if user not found
         }
         //comparing the password with the hashed password in the DB
-        const isPassValid =await bcrypt.compare(password, user.password )
+        const isPassValid = await user.validatePassWord(password);
         if (isPassValid) {
             
             //create a JWT token
-            const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790");
+            const token = await user.getJWT();
            
 
             //add the token to the cookie and send the response back to the user.
@@ -77,17 +77,7 @@ app.post("/login", async (req, res) => {
 //access the profile
 app.get("/profile",userAuth, async (req, res) => {
     try {
-    //     const cookies = req.cookies; 
-
-    // const { token } = cookies;
-    // // validate my token 
-    // const decodedMessage = await jwt.verify(token, "DEV@TINDER$790");
-    
-    
-    // const { _id } = decodedMessage;
-    
-
-   
+        console.log("WY")
         const user = req.user;
        if (!user) {
            res.send("No user found");
@@ -96,14 +86,16 @@ app.get("/profile",userAuth, async (req, res) => {
         res.send("Reading Cookies");
     }
    catch (err) {
-       res.status(404).sedn("Invalid Token");
+       res.status(404).send("Invalid Token");
     }
 });
 
 //sending connection request
-app.post("sendConnectionRequest" , async (req, res) => {
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+    const user = req.user;
+
     console.log("Sending connectionr request");
-    res.send("Request Sent!!!");
+    res.send( user.firstName + " sent the connection request!!!");
 });
 
 //Get one user by email
@@ -189,6 +181,37 @@ connectDB()
     console.log("Error in DB Connection!!!");
 });
 
+// const express = require("express");
+// const app = express();
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+// const cookieParser = require("cookie-parser");
+// app.use(cookieParser());
+// app.get("/", async function (req, res) {
+//     //encrypting and decrypting the data
+//     // res.cookie("name", "Harsh");
+//     // const EncryptPass= await  bcrypt.hash("password", 10);
+//     // console.log(EncryptPass);
 
+//     // const DecryptPass = await bcrypt.compare("password", EncryptPass);
+//     // console.log(DecryptPass);
+    
+//     // res.send("Done cokkie");
+
+//     let token = jwt.sign({ email: "harsh@example.com" }, "secret");
+//     const cookie = res.cookie("token", token);
+//     console.log(token);
+//     console.log(cookie);
+//     res.send("Token made")
+    
+
+// })
+// app.get("/read", function (req, res) {
+//     let data = jwt.verify(req.cookies.token, "secret");
+//     console.log(data);
+//     res.send("TOken read")
+// })
+
+// app.listen(3000);
 
 
