@@ -4,7 +4,7 @@ const userAuth = async (req, res, next)=> {
     
     try { //read the token from the request
         const { token }  = req.cookies;
-        console.log( token)
+        // console.log( token)
         
         const newToken = token;
 

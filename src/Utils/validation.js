@@ -11,5 +11,19 @@ const validateSignUpData = (req) => {
     }
     
 }
+const validateProfileEditData = (req) => {
+    const allowedEditFields = ["firstName", "lastName", "photoUrl", "gender", "about", "skills"];
+    const isEditAllowed = Object.keys(req.body).every(field => allowedEditFields.includes(field));
+    
+    return isEditAllowed;
+}
 
-module.exports = validateSignUpData;
+const validatePasswordInput = (req) => {
+    const password = req.body.password;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    const passValid=  regex.test(password);
+
+    return passValid;
+}
+
+module.exports = { validateSignUpData , validateProfileEditData , validatePasswordInput};

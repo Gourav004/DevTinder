@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
+      ref : "User" ,  //creating a refernce/link with User schema
       minlength: 4, // Minimum length for first name
       maxlength: 20, // Maximum length for first name
     },
