@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
+      ref : "User",
       validate(value) {
         if (value.length > 20) {
           throw new Error("Last name should be 20 characters or less");
