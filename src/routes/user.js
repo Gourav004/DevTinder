@@ -74,7 +74,10 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         // 4. already sent the connection request
 
         const loggedInUser = req.user;
-
+        const page = parseInt(req.query.page) || 1; 
+        let limit = parseInt(req.query.limit) || 10; 
+        limit = limit > 50 ? 50 : limit;
+        const skip = (page - 1) * limit; 
         //find all the connection requests (sent + received)
         //these should not be in feed
         const connectionRequests = await connectionRequest.find({
@@ -87,20 +90,19 @@ userRouter.get("/feed", userAuth, async (req, res) => {
             // .populate("toUserId", "firstName")
             
             //loop thorugh all these user
-            const hideUsersFromFeed = new Set();
-            connectionRequests.forEach(req => {
-                hideUsersFromFeed.add(req.fromUserId.toString());
-                hideUsersFromFeed.add(req.toUserId.toString());
-            })
+        const hideUsersFromFeed = new Set();
+        connectionRequests.forEach(req => {
+            hideUsersFromFeed.add(req.fromUserId.toString());
+            hideUsersFromFeed.add(req.toUserId.toString());
+        });
          
         const users = await User.find({
-           $and:  [
+            $and: [
                 { _id: { $nin: Array.from(hideUsersFromFeed) } },
-                { _id: {$ne : loggedInUser._id}}
+                { _id: { $ne: loggedInUser._id } }
             ],
-        })
-        res.send(users);
-        
+        }).select("firstName lastName").skip(skip).limit(limit);
+        res.send(users);        
     }
 
     
