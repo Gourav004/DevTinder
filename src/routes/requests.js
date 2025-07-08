@@ -13,7 +13,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
         const status = req.params.status;
 
         //Validation to the :status api
-        const allowedStatus = ["ignore", "interested"];
+        const allowedStatus = ["ignored", "interested"];
         if (!allowedStatus.includes(status)) {
             return res.status(400).json({ message: "Invalid status type " + status });
         }
@@ -24,6 +24,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
             fromUserId,
             toUserId,
             status,
+            
         });
 
 

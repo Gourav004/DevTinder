@@ -4,6 +4,9 @@ const userAuth = async (req, res, next)=> {
     
     try { //read the token from the request
         const { token }  = req.cookies;
+        if(!token){
+            res.status(401).send("Unauthorized: No token provided"); 
+        }
         // console.log( token)
         
         const newToken = token;

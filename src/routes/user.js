@@ -5,7 +5,7 @@ const connectionRequest = require("../Models/connectionRequest");
 const User = require("../Models/user")
 
 
-
+const USER_SAFE_DATA = "firstName lastName photoUrl about skills";
 //Get all the pending connection requests for the loggedInUser nothing more nothing less
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     try {
@@ -13,7 +13,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
         const requests = await connectionRequest.find({
             toUserId: loggedInUser._id,
             status: "interested"
-        }).populate("fromUserId", ["firstName", "lastName"]);
+        }).populate("fromUserId", USER_SAFE_DATA);
 
         if (requests == null) {
             return res.send("No requests");
@@ -36,9 +36,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
                 { fromUserId: loggedInUser._id, status: "accepted" }
             ]
         })
-        .populate("fromUserId", "firstName lastName")
-            .populate("toUserId", "firstName lastName") 
-        
+        .populate("fromUserId", USER_SAFE_DATA)
+            .populate("toUserId", USER_SAFE_DATA)
+
         const data = connections.map(row => {
             if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
                 return row.toUserId;
@@ -85,7 +85,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
                 { fromUserId: loggedInUser._id },
                 {toUserId: loggedInUser._id}
             ]
-        }).select("fromUserId toUserId")
+        }).select("fromUserId toUserId status")
             // .populate("fromUserId", "firstName")
             // .populate("toUserId", "firstName")
             
@@ -101,8 +101,8 @@ userRouter.get("/feed", userAuth, async (req, res) => {
                 { _id: { $nin: Array.from(hideUsersFromFeed) } },
                 { _id: { $ne: loggedInUser._id } }
             ],
-        }).select("firstName lastName").skip(skip).limit(limit);
-        res.send(users);        
+        }).select(USER_SAFE_DATA).skip(skip).limit(limit);
+        res.send(users);
     }
 
     
