@@ -9,8 +9,9 @@ const validateSignUpData = require("./Utils/validation")
 app.use(
   cors(
     {
-      origin: ['http://localhost:5173', 'http://localhost:5174'] , // Replace with your frontend URL
+      origin: ['http://localhost:5173', 'http://localhost:5174' , 'https://devtinder-two.vercel.app'] , // Replace with your frontend URL
       credentials: true,
+      methods : ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow these HTTP methods
     } // Allow cookies to be sent with requests
   )
 );
@@ -21,12 +22,14 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/requests");
 const userRouter = require("./routes/user");
+// const paymentRouter = require("./routes/payment");
 
 
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
+// app.use("/", paymentRouter);
 app.use("/", userRouter);
 
 connectDB()
